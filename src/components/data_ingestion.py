@@ -7,6 +7,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
+from src.components.data_transformation import DataTransformation
+from src.components.data_transformation import DataTransformationConfig
+
+
+
 
 # every input data should be validated here using the DataIngestionConfig
 
@@ -25,6 +30,9 @@ class DataIngestion:
             try:
                 df=pd.read_csv('src/notebook/data/stud.csv')
                 logging.info('Read the dataset as dataframe')
+
+                # replace the spaces and / with _
+                df.columns = df.columns.str.replace(' ', '_').str.replace('/', '_')
 
                 os.makedirs(os.path.dirname(self.ingestion_config.train_data_path),exist_ok=True)
 
@@ -50,3 +58,6 @@ class DataIngestion:
 if __name__=="__main__":
     obj=DataIngestion()
     train_data,test_data=obj.initiate_data_ingestion()
+    
+    data_transformation=DataTransformation()
+    train_arr,test_arr,_=data_transformation.initiate_data_transformation(train_data,test_data)
